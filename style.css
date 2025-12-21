@@ -765,6 +765,22 @@ body.full-map #map {
    /* Right arrow: space from right edge */
    .arrow-btn.right { margin-right:32px;
    }
+   /* === FIX LEAFLET HEIGHT ON iOS === */
+#overviewMap {
+  width: 100%;
+  min-height: 320px;
+  height: 60vh;
+  max-height: 520px;
+}
+
+/* iPhone Safari specific */
+@supports (-webkit-touch-callout: none) {
+  #overviewMap {
+    height: 65vh;
+    min-height: 360px;
+  }
+}
+
                    
 }
 /* ================================
