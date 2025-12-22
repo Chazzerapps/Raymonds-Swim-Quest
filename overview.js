@@ -1,19 +1,9 @@
 // overview.js
 // ===========
-// Overview map that shows ALL harbour pools at once.
-// Uses the same data + localStorage helpers as the main app so that
-// progress (visited / not visited) stays perfectly in sync.
 
 import { loadPools } from './data.js';
-import {
-  readVisited,
-  countVisited
-} from './storage.js';
+import { readVisited, countVisited } from './storage.js';
 
-/**
- * Leaflet can render partially if the map is created before the layout settles (common on iOS).
- * This schedules a few re-measures after initial paint.
- */
 function scheduleOverviewInvalidate(map) {
   if (!map) return;
   requestAnimationFrame(() => {
@@ -26,7 +16,6 @@ function scheduleOverviewInvalidate(map) {
   setTimeout(() => { try { map.invalidateSize(true); } catch (e) {} }, 700);
 }
 
-/** Create the small coloured circle icon for each pool. */
 function createOverviewIcon(isVisited) {
   return L.divIcon({
     className: isVisited
@@ -38,7 +27,6 @@ function createOverviewIcon(isVisited) {
   });
 }
 
-/** Update the header badge and subtext message. */
 function updateOverviewText(pools, visitedMap) {
   const badgeEl = document.getElementById('overviewBadge');
   const textEl  = document.getElementById('overviewText');
@@ -46,25 +34,35 @@ function updateOverviewText(pools, visitedMap) {
   const visitedCount = countVisited(visitedMap);
   const total = pools.length;
 
-  if (badgeEl) {
-    badgeEl.textContent = `${visitedCount} / ${total}`;
-  }
+  if (badgeEl) badgeEl.textContent = `${visitedCount} / ${total}`;
 
   if (textEl) {
-    if (total === 0) {
-      textEl.textContent = 'No pools configured.';
-    } else {
-      textEl.textContent = `You’ve visited ${visitedCount} of ${total} harbour pools.`;
-    }
+    textEl.textContent =
+      total === 0
+        ? 'No pools configured.'
+        : `You’ve visited ${visitedCount} of ${total} harbour pools.`;
   }
 }
 
-/** Build the Leaflet map and add one marker per pool. */
 async function initOverviewMap() {
   const mapEl = document.getElementById('overviewMap');
   if (!mapEl) return;
 
-  let pools;
+  // 1) Create map immediately so the page doesn't look "stuck"
+  const map = L.map(mapEl, {
+    zoomControl: true,
+    scrollWheelZoom: true
+  }).setView([-33.8688, 151.2093], 12); // ✅ closer default
+
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    maxZoom: 18,
+    attribution: '&copy; OpenStreetMap'
+  }).addTo(map);
+
+  map.whenReady(() => scheduleOverviewInvalidate(map));
+
+  // 2) Load pools after map exists
+  let pools = [];
   try {
     pools = await loadPools();
   } catch (err) {
@@ -76,77 +74,43 @@ async function initOverviewMap() {
   const visitedMap = readVisited();
   updateOverviewText(pools, visitedMap);
 
-  const map = L.map(mapEl, {
-    zoomControl: true,
-    scrollWheelZoom: true
-  }).setView([-33.8688, 151.2093], 11); // Roughly Sydney CBD
+  // 3) Add markers (guard against bad coords)
+  for (const pool of pools) {
+    if (typeof pool.lat !== 'number' || typeof pool.lng !== 'number') continue;
 
-  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    maxZoom: 18,
-    attribution: '&copy; OpenStreetMap'
-  }).addTo(map);
-
-  map.whenReady(() => scheduleOverviewInvalidate(map));
-
-  const bounds = [];
-
-  pools.forEach(pool => {
     const info = visitedMap[pool.id];
     const isVisited = !!(info && info.done);
 
     const icon = createOverviewIcon(isVisited);
     const marker = L.marker([pool.lat, pool.lng], { icon }).addTo(map);
-
-  map.whenReady(() => scheduleOverviewInvalidate(map));
-
     marker.bindPopup(`<strong>${pool.name}</strong>`);
-
-    bounds.push([pool.lat, pool.lng]);
-  });
-
-  if (bounds.length) {
-    map.fitBounds(bounds, { padding: [40, 40] });
-    scheduleOverviewInvalidate(map);
   }
+
+  scheduleOverviewInvalidate(map);
 }
 
-// Entry point for the overview page.
 document.addEventListener('DOMContentLoaded', () => {
   const openBtn = document.getElementById('openAppBtn');
-  if (openBtn) {
-    openBtn.addEventListener('click', () => {
-      window.location.href = 'app.html';
-    });
-  }
+  if (openBtn) openBtn.addEventListener('click', () => (window.location.href = 'app.html'));
 
   const changeNameBtn = document.getElementById('changeNameBtn');
   if (changeNameBtn) {
     changeNameBtn.addEventListener('click', () => {
       const LS_KEY = 'passportOwnerName';
       let currentName = null;
-      try {
-        currentName = localStorage.getItem(LS_KEY);
-      } catch (e) {
-        currentName = null;
-      }
+      try { currentName = localStorage.getItem(LS_KEY); } catch (e) {}
 
       const defaultName = currentName || 'Carpe Diem Passport';
       const input = prompt('Update passport name:', defaultName);
       if (!input) return;
+
       const nextName = input.trim();
       if (!nextName) return;
 
-      try {
-        localStorage.setItem(LS_KEY, nextName);
-      } catch (e) {
-        // ignore storage errors
-      }
-
-      alert('Passport name updated. You\'ll see it on the cover next time you open the app.');
+      try { localStorage.setItem(LS_KEY, nextName); } catch (e) {}
+      alert("Passport name updated. You'll see it on the cover next time you open the app.");
     });
   }
 
-  initOverviewMap().catch(err =>
-    console.error('Error during overview init', err)
-  );
+  initOverviewMap().catch(err => console.error('Error during overview init', err));
 });
