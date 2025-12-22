@@ -30,18 +30,38 @@ function createOverviewIcon(isVisited) {
  * Leaflet maps render incorrectly if they are created while their container is hidden
  * (e.g. view switched with display:none). This forces a reflow once visible.
  */
+function fixMapSize() {
+  if (!overviewMap) return;
+  try {
+    // true = also recalc pixel bounds; helps iOS/Safari.
+    overviewMap.invalidateSize(true);
+  } catch (e) {
+    // ignore
+  }
+}
+
+/**
+ * Leaflet maps render incorrectly if they are created while their container is hidden
+ * (e.g. view switched with display:none). This forces a reflow once visible.
+ *
+ * On iOS Safari, layout often settles over multiple frames, so we combine:
+ * - double requestAnimationFrame (after paint)
+ * - a few delayed invalidates (after CSS/layout settles)
+ */
 function scheduleOverviewInvalidate() {
   if (!overviewMap) return;
+
   // Two RAFs gives the browser a chance to apply layout + styles before Leaflet measures.
   requestAnimationFrame(() => {
     requestAnimationFrame(() => {
-      try {
-        overviewMap.invalidateSize();
-      } catch (e) {
-        // ignore
-      }
+      fixMapSize();
     });
   });
+
+  // iOS + hidden-view “L-shaped tiles” fix: run a couple more times after layout settles.
+  setTimeout(fixMapSize, 150);
+  setTimeout(fixMapSize, 350);
+  setTimeout(fixMapSize, 700);
 }
 
 
