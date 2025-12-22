@@ -16,16 +16,13 @@ function scheduleOverviewInvalidate(map) {
   setTimeout(() => { try { map.invalidateSize(true); } catch (e) {} }, 700);
 }
 
-function createRaymondIcon(isVisited) {
-  return L.icon({
-    iconUrl: isVisited
-      ? './images/raymond-head.png'
-      : './images/raymond-head.png', // same for now
-
-    iconSize: [34, 34],        // 👈 adjust size here
-    iconAnchor: [17, 17],      // center the head
-    popupAnchor: [0, -16],
-    className: isVisited ? 'raymond-visited' : 'raymond-notvisited'
+/** Create Raymond head marker with coloured ring */
+function createOverviewIcon(isVisited) {
+  return L.divIcon({
+    className: `raymond-pin ${isVisited ? 'visited' : 'notvisited'}`,
+    html: `<img src="assets/raymond-head.png" alt="Raymond" />`,
+    iconSize: [30, 30],
+    iconAnchor: [15, 15]
   });
 }
 
@@ -83,8 +80,8 @@ async function initOverviewMap() {
     const info = visitedMap[pool.id];
     const isVisited = !!(info && info.done);
 
-    const 
-    const icon = createRaymondIcon(isVisited);
+   
+    const icon = createOverviewIcon(isVisited);
     const marker = L.marker([pool.lat, pool.lng], { icon }).addTo(map);
     marker.bindPopup(`<strong>${pool.name}</strong>`);
   }
