@@ -86,27 +86,27 @@ async function initOverviewMap() {
 
   map.whenReady(() => scheduleOverviewInvalidate(map));
 
-  const bounds = [];
+ const bounds = [];
 
-  pools.forEach(pool => {
-    const info = visitedMap[pool.id];
-    const isVisited = !!(info && info.done);
+pools.forEach(pool => {
+  const info = visitedMap[pool.id];
+  const isVisited = !!(info && info.done);
 
-    const icon = createOverviewIcon(isVisited);
-    const marker = L.marker([pool.lat, pool.lng], { icon }).addTo(map);
+  const icon = createOverviewIcon(isVisited);
+  const marker = L.marker([pool.lat, pool.lng], { icon }).addTo(map);
 
-  map.whenReady(() => scheduleOverviewInvalidate(map));
+  marker.bindPopup(`<strong>${pool.name}</strong>`);
+  bounds.push([pool.lat, pool.lng]);
+});
 
-    marker.bindPopup(`<strong>${pool.name}</strong>`);
-
-    bounds.push([pool.lat, pool.lng]);
+if (bounds.length) {
+  map.fitBounds(bounds, {
+    padding: [60, 60],
+    maxZoom: 13
   });
-
-  if (bounds.length) {
-    map.fitBounds(bounds, { padding: [40, 40] });
-    scheduleOverviewInvalidate(map);
-  }
+  scheduleOverviewInvalidate(map);
 }
+
 
 // Entry point for the overview page.
 document.addEventListener('DOMContentLoaded', () => {
