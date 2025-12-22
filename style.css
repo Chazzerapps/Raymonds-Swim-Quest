@@ -510,6 +510,7 @@ body.full-map #map {
    ========================================================================== */
 
 @media (max-width: 700px) {
+
   .titlebar {
     flex-wrap: wrap;
     gap: 6px;
@@ -561,10 +562,32 @@ body.full-map #map {
   .map-wrap #map {
     height: 100% !important;
   }
+
+
+/* --- Overview page (Leaflet on iOS) ---
+   The global mobile rules set body overflow:hidden and main height to a fixed value.
+   On iOS Safari this can cause Leaflet to tile into a partially-measured box (the "L-shape").
+   These overrides restore normal flow on the overview page and give the map a stable height.
+*/
+body.overview-body {
+  overflow: auto;
+}
+
+body.overview-body main.overview-main {
+  height: auto;
+  min-height: calc(100svh - 60px);
+}
+
+body.overview-body #overviewMap {
+  height: 55svh;
+  min-height: 360px;
+  max-height: 520px;
+}
 }
 
 /* --- iPhone Safari map height fix --- */
 @supports (-webkit-touch-callout: none) {
+
   main {
     height: auto !important;
     min-height: calc(100vh - 120px) !important;
@@ -586,6 +609,19 @@ body.full-map #map {
     height: 100% !important;
     min-height: 300px !important;
   }
+
+
+/* Overview page: ensure Leaflet container has a stable height on iOS Safari */
+body.overview-body main.overview-main {
+  height: auto !important;
+  min-height: calc(100svh - 60px) !important;
+}
+
+body.overview-body #overviewMap {
+  height: 55svh !important;
+  min-height: 360px !important;
+  max-height: 520px !important;
+}
 }
 
 /* ==========================================================================
@@ -765,22 +801,6 @@ body.full-map #map {
    /* Right arrow: space from right edge */
    .arrow-btn.right { margin-right:32px;
    }
-   /* === FIX LEAFLET HEIGHT ON iOS === */
-#overviewMap {
-  width: 100%;
-  min-height: 320px;
-  height: 60vh;
-  max-height: 520px;
-}
-
-/* iPhone Safari specific */
-@supports (-webkit-touch-callout: none) {
-  #overviewMap {
-    height: 65vh;
-    min-height: 360px;
-  }
-}
-
                    
 }
 /* ================================
