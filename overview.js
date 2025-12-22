@@ -26,15 +26,13 @@ function scheduleOverviewInvalidate(map) {
   setTimeout(() => { try { map.invalidateSize(true); } catch (e) {} }, 700);
 }
 
-/** Create the small coloured circle icon for each pool. */
+/** Create Raymond head marker with coloured ring */
 function createOverviewIcon(isVisited) {
   return L.divIcon({
-    className: isVisited
-      ? 'overview-marker overview-marker-visited'
-      : 'overview-marker overview-marker-notvisited',
-    html: '',
-    iconSize: [22, 22],
-    iconAnchor: [11, 11]
+    className: `raymond-pin ${isVisited ? 'visited' : 'notvisited'}`,
+    html: `<img src="assets/raymond-head.png" alt="Raymond" />`,
+    iconSize: [30, 30],
+    iconAnchor: [15, 15]
   });
 }
 
