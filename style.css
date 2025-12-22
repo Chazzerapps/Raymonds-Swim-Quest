@@ -510,7 +510,6 @@ body.full-map #map {
    ========================================================================== */
 
 @media (max-width: 700px) {
-
   .titlebar {
     flex-wrap: wrap;
     gap: 6px;
@@ -562,32 +561,10 @@ body.full-map #map {
   .map-wrap #map {
     height: 100% !important;
   }
-
-
-/* --- Overview page (Leaflet on iOS) ---
-   The global mobile rules set body overflow:hidden and main height to a fixed value.
-   On iOS Safari this can cause Leaflet to tile into a partially-measured box (the "L-shape").
-   These overrides restore normal flow on the overview page and give the map a stable height.
-*/
-body.overview-body {
-  overflow: auto;
-}
-
-body.overview-body main.overview-main {
-  height: auto;
-  min-height: calc(100svh - 60px);
-}
-
-body.overview-body #overviewMap {
-  height: 55svh;
-  min-height: 360px;
-  max-height: 520px;
-}
 }
 
 /* --- iPhone Safari map height fix --- */
 @supports (-webkit-touch-callout: none) {
-
   main {
     height: auto !important;
     min-height: calc(100vh - 120px) !important;
@@ -609,19 +586,6 @@ body.overview-body #overviewMap {
     height: 100% !important;
     min-height: 300px !important;
   }
-
-
-/* Overview page: ensure Leaflet container has a stable height on iOS Safari */
-body.overview-body main.overview-main {
-  height: auto !important;
-  min-height: calc(100svh - 60px) !important;
-}
-
-body.overview-body #overviewMap {
-  height: 55svh !important;
-  min-height: 360px !important;
-  max-height: 520px !important;
-}
 }
 
 /* ==========================================================================
@@ -925,104 +889,3 @@ body.overview-body #overviewMap {
   line-height: 1.35;
   opacity: .85;
 }
-
-
-/* =========================================================
-   RAYMOND’S SWIM QUEST — STORYBOOK SPLASH
-   ========================================================= */
-
-body.kids.splash-body{
-  /* Kids version: keep the whole screen “storybook paper” (no navy showing) */
-  background: #fffdf6; /* storybook paper */
-  cursor: default;
-}
-
-/* Storybook “page” */
-.kids .splash-card{
-  width: 100%;
-  min-height: 100svh;          /* iOS-safe full height */
-  margin: 0;
-
-  /* Comfortable breathing room on phones */
-  padding: 36px 20px 56px;     /* extra bottom padding = nicer visual centering */
-  box-sizing: border-box;
-
-  /* True centering */
-  display: flex;
-  flex-direction: column;
-  align-items: center;         /* horizontal centering */
-  justify-content: center;     /* vertical centering */
-  gap: 14px;
-
-  text-align: center;
-
-  background: #fffdf6;         /* storybook paper */
-  border-radius: 0;
-  border: none;
-  box-shadow: none;
-}
-
-
-/* Title stays calm and readable */
-.kids .splash-title{
-  font-size: 1.75rem;
-  line-height: 1.15;
-  margin: 0;
-  color: #0A1A2F;
-}
-
-/* Name feels like a storybook badge */
-.kids .kid-name{
-  display: inline-block;
-  padding: 6px 14px;
-  margin: 2px auto 10px; /* tighter = better centring */
-  font-weight: 800;
-  letter-spacing: .06em;
-  text-transform: uppercase;
-  font-size: 0.9rem;
-  color: #0A1A2F;
-  background: rgba(78,198,198,.18);
-  border: 1px solid rgba(10,26,47,.12);
-  border-radius: 999px;
-}
-
-/* Raymond becomes a sticker character */
-.kids .splash-mascot{
-  width: min(240px, 68vw);  /* scales on small phones */
-  margin: 0 auto;
-  transform: rotate(-1.5deg);
-}
-
-.kids .splash-mascot img{
-  width: 100%;
-  border-radius: 22px;
-  outline: 10px solid rgba(255,255,255,.92);
-  outline-offset: -10px;
-  box-shadow: 0 16px 30px rgba(0,0,0,.24);
-}
-
-/* Gentle story line */
-.kids .splash-subtitle{
-  font-size: 1rem;
-  color: #445;
-  margin: 0 0 6px;
-}
-
-/* Friendly primary action */
-.kids .splash-start{
-  width: 100%;
-  max-width: 340px;
-  padding: 14px 18px;
-  font-size: 1.1rem;
-  border-radius: 999px;
-  border: none;
-  background: #4EC6C6;
-  color: #0A1A2F;
-  font-weight: 800;
-  box-shadow: 0 10px 18px rgba(78,198,198,.35);
-}
-
-.kids .splash-start:active{
-  transform: scale(.985);
-}
-
