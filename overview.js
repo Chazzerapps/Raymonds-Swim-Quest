@@ -10,9 +10,55 @@ import {
   countVisited
 } from './storage.js';
 
-
 // Keep a reference so we can force Leaflet to recalc size when the view becomes visible.
 let overviewMap = null;
+
+/**
+ * Wait until an element has a real, non-zero on-screen size.
+ * Leaflet can render "missing tiles" (often an L-shaped blank area) if the map
+ * is created while the container is hidden or still measuring to 0px.
+ *
+ * This is common on iOS Safari when switching views.
+ */
+function waitForVisibleSize(el, {
+  minW = 120,
+  minH = 240,
+  timeoutMs = 2500
+} = {}) {
+  const start = performance.now();
+
+  return new Promise((resolve, reject) => {
+    const tick = () => {
+      const w = el.clientWidth || 0;
+      const h = el.clientHeight || 0;
+
+      // offsetParent === null is a decent proxy for display:none (except for fixed)
+      const looksHidden = (el.offsetParent === null && getComputedStyle(el).position !== 'fixed');
+
+      if (!looksHidden && w >= minW && h >= minH) {
+        return resolve({ w, h });
+      }
+
+      if (performance.now() - start > timeoutMs) {
+        return reject(new Error(`overviewMap container never reached a usable size (w=${w}, h=${h})`));
+      }
+
+      requestAnimationFrame(tick);
+    };
+
+    tick();
+  });
+}
+
+/** Force Leaflet to re-measure and re-render tiles/markers. */
+function forceLeafletReflow() {
+  if (!overviewMap) return;
+  try {
+    overviewMap.invalidateSize(true);
+  } catch (e) {
+    // ignore
+  }
+}
 
 /** Create Raymond head marker with coloured ring (visited = gold, not yet = blue). */
 function createOverviewIcon(isVisited) {
@@ -24,44 +70,6 @@ function createOverviewIcon(isVisited) {
     iconSize: [30, 30],
     iconAnchor: [15, 15]
   });
-}
-
-/**
- * Leaflet maps render incorrectly if they are created while their container is hidden
- * (e.g. view switched with display:none). This forces a reflow once visible.
- */
-function fixMapSize() {
-  if (!overviewMap) return;
-  try {
-    // true = also recalc pixel bounds; helps iOS/Safari.
-    overviewMap.invalidateSize(true);
-  } catch (e) {
-    // ignore
-  }
-}
-
-/**
- * Leaflet maps render incorrectly if they are created while their container is hidden
- * (e.g. view switched with display:none). This forces a reflow once visible.
- *
- * On iOS Safari, layout often settles over multiple frames, so we combine:
- * - double requestAnimationFrame (after paint)
- * - a few delayed invalidates (after CSS/layout settles)
- */
-function scheduleOverviewInvalidate() {
-  if (!overviewMap) return;
-
-  // Two RAFs gives the browser a chance to apply layout + styles before Leaflet measures.
-  requestAnimationFrame(() => {
-    requestAnimationFrame(() => {
-      fixMapSize();
-    });
-  });
-
-  // iOS + hidden-view “L-shaped tiles” fix: run a couple more times after layout settles.
-  setTimeout(fixMapSize, 150);
-  setTimeout(fixMapSize, 350);
-  setTimeout(fixMapSize, 700);
 }
 
 
@@ -91,6 +99,29 @@ async function initOverviewMap() {
   const mapEl = document.getElementById('overviewMap');
   if (!mapEl) return;
 
+  // Defensive: make sure the map element has a usable height even if CSS hasn't
+  // resolved yet (this is a common culprit for the "missing tiles" quadrant on iOS).
+  try {
+    const h = mapEl.clientHeight || 0;
+    if (h < 200) {
+      mapEl.style.width = '100%';
+      mapEl.style.minHeight = '360px';
+      // Give it a reasonable height that matches your card layout; CSS can override.
+      mapEl.style.height = mapEl.style.height || '60vh';
+    }
+  } catch (e) {
+    // ignore
+  }
+
+  // IMPORTANT: wait until the overviewMap container has a stable size.
+  // Without this, iOS Safari can render a blank "L" shaped area of tiles.
+  try {
+    await waitForVisibleSize(mapEl);
+  } catch (e) {
+    console.warn(e);
+    // Even if we timed out, continue — later resize observers may fix it.
+  }
+
   let pools;
   try {
     pools = await loadPools();
@@ -113,10 +144,6 @@ async function initOverviewMap() {
     attribution: '&copy; OpenStreetMap'
   }).addTo(overviewMap);
 
-  // Fix iOS/Safari + hidden-container rendering glitches
-  overviewMap.whenReady(() => scheduleOverviewInvalidate());
-  scheduleOverviewInvalidate();
-
   const bounds = [];
 
   pools.forEach(pool => {
@@ -135,7 +162,25 @@ async function initOverviewMap() {
     overviewMap.fitBounds(bounds, { padding: [40, 40] });
   }
 
-  scheduleOverviewInvalidate();
+  // Immediate reflow after fitBounds (helps on iOS where fitBounds can change size/zoom)
+  forceLeafletReflow();
+  requestAnimationFrame(() => forceLeafletReflow());
+
+  // Reflow fixes (iOS / hidden view / orientation changes)
+  // 1) After Leaflet reports ready
+  overviewMap.whenReady(() => {
+    forceLeafletReflow();
+    // Some iOS layouts settle late; a couple of delayed reflows help.
+    setTimeout(forceLeafletReflow, 150);
+    setTimeout(forceLeafletReflow, 350);
+    setTimeout(forceLeafletReflow, 700);
+  });
+
+  // 2) Watch container resize and reflow tiles
+  if ('ResizeObserver' in window) {
+    const ro = new ResizeObserver(() => forceLeafletReflow());
+    ro.observe(mapEl);
+  }
 }
 
 // Entry point for the overview page.
@@ -174,13 +219,20 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-    // If the user rotates the phone or returns to the tab, re-measure the map.
-  window.addEventListener('resize', () => scheduleOverviewInvalidate());
-  document.addEventListener('visibilitychange', () => {
-    if (!document.hidden) scheduleOverviewInvalidate();
-  });
-
-initOverviewMap().catch(err =>
+  initOverviewMap().catch(err =>
     console.error('Error during overview init', err)
   );
+
+  // If the user rotates the phone or returns to the tab, re-measure the map.
+  window.addEventListener('resize', () => {
+    // Small delay lets Safari finish its resize pass
+    setTimeout(forceLeafletReflow, 120);
+  });
+
+  document.addEventListener('visibilitychange', () => {
+    if (!document.hidden) {
+      setTimeout(forceLeafletReflow, 120);
+      setTimeout(forceLeafletReflow, 350);
+    }
+  });
 });
