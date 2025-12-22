@@ -55,7 +55,7 @@ async function initOverviewMap() {
   }).setView([-33.8688, 151.2093], 12); // ✅ closer default
 
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    maxZoom: 18,
+    maxZoom: 12,
     attribution: '&copy; OpenStreetMap'
   }).addTo(map);
 
