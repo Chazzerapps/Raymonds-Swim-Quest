@@ -10,6 +10,22 @@ import {
   countVisited
 } from './storage.js';
 
+/**
+ * Leaflet can render partially if the map is created before the layout settles (common on iOS).
+ * This schedules a few re-measures after initial paint.
+ */
+function scheduleOverviewInvalidate(map) {
+  if (!map) return;
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
+      try { map.invalidateSize(true); } catch (e) {}
+    });
+  });
+  setTimeout(() => { try { map.invalidateSize(true); } catch (e) {} }, 150);
+  setTimeout(() => { try { map.invalidateSize(true); } catch (e) {} }, 350);
+  setTimeout(() => { try { map.invalidateSize(true); } catch (e) {} }, 700);
+}
+
 /** Create the small coloured circle icon for each pool. */
 function createOverviewIcon(isVisited) {
   return L.divIcon({
@@ -70,6 +86,8 @@ async function initOverviewMap() {
     attribution: '&copy; OpenStreetMap'
   }).addTo(map);
 
+  map.whenReady(() => scheduleOverviewInvalidate(map));
+
   const bounds = [];
 
   pools.forEach(pool => {
@@ -79,6 +97,8 @@ async function initOverviewMap() {
     const icon = createOverviewIcon(isVisited);
     const marker = L.marker([pool.lat, pool.lng], { icon }).addTo(map);
 
+  map.whenReady(() => scheduleOverviewInvalidate(map));
+
     marker.bindPopup(`<strong>${pool.name}</strong>`);
 
     bounds.push([pool.lat, pool.lng]);
@@ -86,6 +106,7 @@ async function initOverviewMap() {
 
   if (bounds.length) {
     map.fitBounds(bounds, { padding: [40, 40] });
+    scheduleOverviewInvalidate(map);
   }
 }
 

@@ -527,8 +527,19 @@ body.full-map #map {
     font-size: 13px;
   }
 
-  body {
+    body {
     overflow: hidden;
+  }
+
+  /* Overview page needs scrolling + stable map height (Leaflet iOS fix) */
+  body.overview-body {
+    overflow: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  body.overview-body .overview-main {
+    height: auto;
+    min-height: calc(100svh - 60px);
   }
 
   main {
@@ -757,7 +768,9 @@ body.full-map #map {
    
 
   #overviewMap {
-    height: calc(100vh - 200px);
+    height: 55svh;
+    min-height: 360px;
+    max-height: 520px;
   }
    /* Left arrow: space from left edge */
    .arrow-btn.left { margin-left:32px;
