@@ -52,7 +52,7 @@ async function initOverviewMap() {
   const map = L.map(mapEl, {
     zoomControl: true,
     scrollWheelZoom: true
-  }).setView([-33.8688, 151.2093], 12); // ✅ closer default
+  }).setView([-33.8688, 151.2093], 11); // ✅ closer default
 
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     maxZoom: 18,
