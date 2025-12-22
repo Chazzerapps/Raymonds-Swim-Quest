@@ -26,13 +26,15 @@ function scheduleOverviewInvalidate(map) {
   setTimeout(() => { try { map.invalidateSize(true); } catch (e) {} }, 700);
 }
 
-/** Create Raymond head marker with coloured ring */
+/** Create the small coloured circle icon for each pool. */
 function createOverviewIcon(isVisited) {
   return L.divIcon({
-    className: `raymond-pin ${isVisited ? 'visited' : 'notvisited'}`,
-    html: `<img src="assets/raymond-head.png" alt="Raymond" />`,
-    iconSize: [30, 30],
-    iconAnchor: [15, 15]
+    className: isVisited
+      ? 'overview-marker overview-marker-visited'
+      : 'overview-marker overview-marker-notvisited',
+    html: '',
+    iconSize: [22, 22],
+    iconAnchor: [11, 11]
   });
 }
 
@@ -86,27 +88,27 @@ async function initOverviewMap() {
 
   map.whenReady(() => scheduleOverviewInvalidate(map));
 
- const bounds = [];
+  const bounds = [];
 
-pools.forEach(pool => {
-  const info = visitedMap[pool.id];
-  const isVisited = !!(info && info.done);
+  pools.forEach(pool => {
+    const info = visitedMap[pool.id];
+    const isVisited = !!(info && info.done);
 
-  const icon = createOverviewIcon(isVisited);
-  const marker = L.marker([pool.lat, pool.lng], { icon }).addTo(map);
+    const icon = createOverviewIcon(isVisited);
+    const marker = L.marker([pool.lat, pool.lng], { icon }).addTo(map);
 
-  marker.bindPopup(`<strong>${pool.name}</strong>`);
-  bounds.push([pool.lat, pool.lng]);
-});
+  map.whenReady(() => scheduleOverviewInvalidate(map));
 
-if (bounds.length) {
-  map.fitBounds(bounds, {
-    padding: [60, 60],
-    maxZoom: 13
+    marker.bindPopup(`<strong>${pool.name}</strong>`);
+
+    bounds.push([pool.lat, pool.lng]);
   });
-  scheduleOverviewInvalidate(map);
-}
 
+  if (bounds.length) {
+    map.fitBounds(bounds, { padding: [40, 40] });
+    scheduleOverviewInvalidate(map);
+  }
+}
 
 // Entry point for the overview page.
 document.addEventListener('DOMContentLoaded', () => {
