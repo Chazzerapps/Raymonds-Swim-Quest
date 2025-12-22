@@ -767,6 +767,37 @@ body.full-map #map {
    }
                    
 }
+
+/* ================================
+   RAYMOND MAP MARKERS (OVERVIEW)
+   ================================ */
+
+.raymond-pin{
+  width: 30px;
+  height: 30px;
+  border-radius: 999px;
+  display: grid;
+  place-items: center;
+  background: #fff;
+  box-shadow: 0 0 6px rgba(0,0,0,.35);
+}
+
+.raymond-pin img{
+  width: 24px;
+  height: 24px;
+  border-radius: 999px;
+  display: block;
+}
+
+/* Ring colours */
+.raymond-pin.visited{
+  border: 3px solid var(--gold);
+}
+
+.raymond-pin.notvisited{
+  border: 3px solid #6c8ab4;
+}
+
 /* ================================
    MAP ACTION BUTTONS — FIXED TOP
    ================================ */
