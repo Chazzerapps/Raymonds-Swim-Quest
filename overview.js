@@ -21,8 +21,8 @@ function createOverviewIcon(isVisited) {
   return L.divIcon({
     className: `raymond-pin ${isVisited ? 'visited' : 'notvisited'}`,
     html: `<img src="assets/raymond-head.png" alt="Raymond" />`,
-    iconSize: [30, 30],
-    iconAnchor: [15, 15]
+    iconSize: [48, 48],
+    iconAnchor: [24, 24]
   });
 }
 
