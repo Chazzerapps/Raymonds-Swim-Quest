@@ -19,7 +19,7 @@ function scheduleOverviewInvalidate(map) {
 /** Create Raymond head marker (PNG) */
 function createRaymondIcon(isVisited) {
   return L.icon({
-    iconUrl: './images/raymond-head.png',
+    iconUrl: './assets/raymond-head.png',
     iconSize: [60, 60],
     iconAnchor: [30, 30],
     popupAnchor: [0, -22],
