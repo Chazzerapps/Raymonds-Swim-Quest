@@ -88,11 +88,14 @@ async function initOverviewMap() {
     marker.bindPopup(`<strong>${pool.name}</strong>`);
   }
   // Force final zoom after iOS reflow
-  setTimeout(() => {
-  map.setView([-33.8688, 151.2093], 11, { animate: false });
-}, 800);
 
+    // After markers are added, let Leaflet settle sizing first…
   scheduleOverviewInvalidate(map);
+
+  // …then lock the final view AFTER all iOS reflows.
+  setTimeout(() => {
+    map.setView([-33.8688, 151.2093], 11, { animate: false });
+  }, 900);
 }
 
 document.addEventListener('DOMContentLoaded', () => {
