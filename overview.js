@@ -16,7 +16,7 @@ function scheduleOverviewInvalidate(map) {
   setTimeout(() => { try { map.invalidateSize(true); } catch (e) {} }, 700);
 }
 
-/** Create Raymond head marker with coloured ring */
+/** Create Raymond head marker (PNG) */
 function createRaymondIcon(isVisited) {
   return L.icon({
     iconUrl: './images/raymond-head.png',
@@ -48,14 +48,14 @@ async function initOverviewMap() {
   const mapEl = document.getElementById('overviewMap');
   if (!mapEl) return;
 
-  // 1) Create map immediately so the page doesn't look "stuck"
+  // 1) Create map immediately (prevents "stuck loading" feeling)
   const map = L.map(mapEl, {
     zoomControl: true,
     scrollWheelZoom: true
-  }).setView([-33.8688, 151.2093], 12); // ✅ closer default
+  }).setView([-33.8688, 151.2093], 11); // ✅ nicer overview zoom
 
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    maxZoom: 12,
+    maxZoom: 18,
     attribution: '&copy; OpenStreetMap'
   }).addTo(map);
 
@@ -74,15 +74,17 @@ async function initOverviewMap() {
   const visitedMap = readVisited();
   updateOverviewText(pools, visitedMap);
 
-  // 3) Add markers (guard against bad coords)
+  // 3) Add markers
   for (const pool of pools) {
-    if (typeof pool.lat !== 'number' || typeof pool.lng !== 'number') continue;
+    const latOk = typeof pool.lat === 'number' && Number.isFinite(pool.lat);
+    const lngOk = typeof pool.lng === 'number' && Number.isFinite(pool.lng);
+    if (!latOk || !lngOk) continue;
 
     const info = visitedMap[pool.id];
     const isVisited = !!(info && info.done);
 
     const icon = createRaymondIcon(isVisited);
-    L.marker([pool.lat, pool.lng], { icon }).addTo(map);
+    const marker = L.marker([pool.lat, pool.lng], { icon }).addTo(map);
     marker.bindPopup(`<strong>${pool.name}</strong>`);
   }
 
@@ -91,7 +93,11 @@ async function initOverviewMap() {
 
 document.addEventListener('DOMContentLoaded', () => {
   const openBtn = document.getElementById('openAppBtn');
-  if (openBtn) openBtn.addEventListener('click', () => (window.location.href = 'app.html'));
+  if (openBtn) {
+    openBtn.addEventListener('click', () => {
+      window.location.href = 'app.html';
+    });
+  }
 
   const changeNameBtn = document.getElementById('changeNameBtn');
   if (changeNameBtn) {
