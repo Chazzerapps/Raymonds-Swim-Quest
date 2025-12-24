@@ -983,30 +983,36 @@ body.kids.splash-body{
 }
 
 /* =========================================================
-   LEAFLET PNG ICONS — let JS iconSize control sizing
-   (Fixes "changed to 60 but icon doesn't grow")
+   RAYMOND PNG MAP MARKERS — iOS SAFE
    ========================================================= */
 
+/* Let Leaflet control the icon box completely */
 .leaflet-marker-icon {
-  width: auto !important;
-  height: auto !important;
   background: none !important;
   border: none !important;
   border-radius: 0 !important;
 }
 
+/* No shadow image */
 .leaflet-marker-shadow {
-  display: none !important; /* optional */
+  display: none !important;
 }
 
-/* Optional: make Raymond icons pop a bit */
-.leaflet-marker-icon.raymond-notvisited,
-.leaflet-marker-icon.raymond-visited {
-  filter: drop-shadow(0 2px 3px rgba(0,0,0,0.35));
-}
-/* Make sure PNG marker images fill the Leaflet icon box */
+/* Ensure PNG fills icon box exactly */
 .leaflet-marker-icon img {
   width: 100% !important;
   height: 100% !important;
   display: block;
+  pointer-events: none;
+}
+
+/* Subtle depth without blue ring */
+.leaflet-marker-icon.raymond-notvisited,
+.leaflet-marker-icon.raymond-visited {
+  filter: drop-shadow(0 3px 4px rgba(0,0,0,0.35));
+}
+
+/* Optional visual cue if you want later */
+.leaflet-marker-icon.raymond-visited {
+  transform: scale(1.05);
 }
