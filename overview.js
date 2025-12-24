@@ -20,8 +20,8 @@ function scheduleOverviewInvalidate(map) {
 function createRaymondIcon(isVisited) {
   return L.icon({
     iconUrl: './assets/raymond-head.png',
-    iconSize: [60, 60],
-    iconAnchor: [30, 30],
+    iconSize: [50, 50],
+    iconAnchor: [25, 25],
     popupAnchor: [0, -22],
     className: isVisited ? 'raymond-visited' : 'raymond-notvisited'
   });
