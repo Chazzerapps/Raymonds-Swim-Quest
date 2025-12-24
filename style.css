@@ -731,21 +731,6 @@ body.full-map #map {
   background-color: #6c8ab4;
 }
 
-.overview-marker {
-  width: 22px;
-  height: 22px;
-  border-radius: 50%;
-  border: 2px solid #ffffff;
-  box-shadow: 0 0 6px rgba(0,0,0,.4);
-}
-
-.overview-marker-visited {
-  background: var(--gold);
-}
-
-.overview-marker-notvisited {
-  background: #6c8ab4;
-}
 
 /* Responsive tweaks for overview */
 
@@ -772,31 +757,7 @@ body.full-map #map {
    RAYMOND MAP MARKERS (OVERVIEW)
    ================================ */
 
-.raymond-pin{
-  width: 30px;
-  height: 30px;
-  border-radius: 999px;
-  display: grid;
-  place-items: center;
-  background: #fff;
-  box-shadow: 0 0 6px rgba(0,0,0,.35);
-}
 
-.raymond-pin img{
-  width: 24px;
-  height: 24px;
-  border-radius: 999px;
-  display: block;
-}
-
-/* Ring colours */
-.raymond-pin.visited{
-  border: 3px solid var(--gold);
-}
-
-.raymond-pin.notvisited{
-  border: 3px solid #6c8ab4;
-}
 
 /* ================================
    MAP ACTION BUTTONS — FIXED TOP
@@ -1019,5 +980,28 @@ body.kids.splash-body{
 
 .kids .splash-start:active{
   transform: scale(.985);
+}
+
+/* =========================================================
+   LEAFLET PNG ICONS — let JS iconSize control sizing
+   (Fixes "changed to 60 but icon doesn't grow")
+   ========================================================= */
+
+.leaflet-marker-icon {
+  width: auto !important;
+  height: auto !important;
+  background: none !important;
+  border: none !important;
+  border-radius: 0 !important;
+}
+
+.leaflet-marker-shadow {
+  display: none !important; /* optional */
+}
+
+/* Optional: make Raymond icons pop a bit */
+.leaflet-marker-icon.raymond-notvisited,
+.leaflet-marker-icon.raymond-visited {
+  filter: drop-shadow(0 2px 3px rgba(0,0,0,0.35));
 }
 
