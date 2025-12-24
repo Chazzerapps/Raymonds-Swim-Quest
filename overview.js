@@ -87,6 +87,10 @@ async function initOverviewMap() {
     const marker = L.marker([pool.lat, pool.lng], { icon }).addTo(map);
     marker.bindPopup(`<strong>${pool.name}</strong>`);
   }
+  // Force final zoom after iOS reflow
+  setTimeout(() => {
+  map.setView([-33.8688, 151.2093], 11, { animate: false });
+}, 800);
 
   scheduleOverviewInvalidate(map);
 }
