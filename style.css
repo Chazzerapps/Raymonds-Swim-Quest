@@ -1004,4 +1004,9 @@ body.kids.splash-body{
 .leaflet-marker-icon.raymond-visited {
   filter: drop-shadow(0 2px 3px rgba(0,0,0,0.35));
 }
-
+/* Make sure PNG marker images fill the Leaflet icon box */
+.leaflet-marker-icon img {
+  width: 100% !important;
+  height: 100% !important;
+  display: block;
+}
