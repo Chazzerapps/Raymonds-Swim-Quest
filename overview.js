@@ -6,24 +6,29 @@ import { readVisited, countVisited } from './storage.js';
 
 function scheduleOverviewInvalidate(map) {
   if (!map) return;
+
   requestAnimationFrame(() => {
     requestAnimationFrame(() => {
       try { map.invalidateSize(true); } catch (e) {}
     });
   });
-  setTimeout(() => { try { map.invalidateSize(true); } catch (e) {} }, 150);
-  setTimeout(() => { try { map.invalidateSize(true); } catch (e) {} }, 350);
-  setTimeout(() => { try { map.invalidateSize(true); } catch (e) {} }, 700);
+
+  setTimeout(() => { try { map.invalidateSize(true); } catch (e) {} }, 250);
+  setTimeout(() => { try { map.invalidateSize(true); } catch (e) {} }, 600);
 }
 
 /** Create Raymond head marker (PNG) */
 function createRaymondIcon(isVisited) {
+  const size = 56; // retina-friendly, still kid-sized
+
   return L.icon({
     iconUrl: './assets/raymond-head.png',
-    iconSize: [50, 50],
-    iconAnchor: [25, 25],
-    popupAnchor: [0, -22],
-    className: isVisited ? 'raymond-visited' : 'raymond-notvisited'
+    iconSize: [size, size],
+    iconAnchor: [size / 2, size / 2],   // true centre
+    popupAnchor: [0, -size / 2 - 6],    // popup above head
+    className: isVisited
+      ? 'raymond-visited'
+      : 'raymond-notvisited'
   });
 }
 
@@ -48,11 +53,10 @@ async function initOverviewMap() {
   const mapEl = document.getElementById('overviewMap');
   if (!mapEl) return;
 
-  // 1) Create map immediately (prevents "stuck loading" feeling)
   const map = L.map(mapEl, {
     zoomControl: true,
     scrollWheelZoom: true
-  }).setView([-33.8688, 151.2093], 11); // ✅ nicer overview zoom
+  }).setView([-33.8688, 151.2093], 11);
 
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     maxZoom: 18,
@@ -61,7 +65,6 @@ async function initOverviewMap() {
 
   map.whenReady(() => scheduleOverviewInvalidate(map));
 
-  // 2) Load pools after map exists
   let pools = [];
   try {
     pools = await loadPools();
@@ -74,26 +77,23 @@ async function initOverviewMap() {
   const visitedMap = readVisited();
   updateOverviewText(pools, visitedMap);
 
-  // 3) Add markers
   for (const pool of pools) {
-    const latOk = typeof pool.lat === 'number' && Number.isFinite(pool.lat);
-    const lngOk = typeof pool.lng === 'number' && Number.isFinite(pool.lng);
-    if (!latOk || !lngOk) continue;
+    if (!Number.isFinite(pool.lat) || !Number.isFinite(pool.lng)) continue;
 
     const info = visitedMap[pool.id];
     const isVisited = !!(info && info.done);
 
-    const icon = createRaymondIcon(isVisited);
-    const marker = L.marker([pool.lat, pool.lng], { icon }).addTo(map);
+    const marker = L.marker(
+      [pool.lat, pool.lng],
+      { icon: createRaymondIcon(isVisited) }
+    ).addTo(map);
+
     marker.bindPopup(`<strong>${pool.name}</strong>`);
   }
-  // Force final zoom after iOS reflow
 
-    // After markers are added, let Leaflet settle sizing first…
-  scheduleOverviewInvalidate(map);
-
-  // …then lock the final view AFTER all iOS reflows.
+  // Final iOS-safe settle
   setTimeout(() => {
+    scheduleOverviewInvalidate(map);
     map.setView([-33.8688, 151.2093], 11, { animate: false });
   }, 900);
 }
@@ -106,24 +106,8 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  const changeNameBtn = document.getElementById('changeNameBtn');
-  if (changeNameBtn) {
-    changeNameBtn.addEventListener('click', () => {
-      const LS_KEY = 'passportOwnerName';
-      let currentName = null;
-      try { currentName = localStorage.getItem(LS_KEY); } catch (e) {}
-
-      const defaultName = currentName || 'Carpe Diem Passport';
-      const input = prompt('Update passport name:', defaultName);
-      if (!input) return;
-
-      const nextName = input.trim();
-      if (!nextName) return;
-
-      try { localStorage.setItem(LS_KEY, nextName); } catch (e) {}
-      alert("Passport name updated. You'll see it on the cover next time you open the app.");
-    });
-  }
-
-  initOverviewMap().catch(err => console.error('Error during overview init', err));
+  initOverviewMap().catch(err =>
+    console.error('Error during overview init', err)
+  );
 });
+
