@@ -17,12 +17,13 @@ function scheduleOverviewInvalidate(map) {
 }
 
 /** Create Raymond head marker with coloured ring */
-function createOverviewIcon(isVisited) {
-  return L.divIcon({
-    className: `raymond-pin ${isVisited ? 'visited' : 'notvisited'}`,
-    html: `<img src="assets/raymond-head.png" alt="Raymond" />`,
+function createRaymondIcon(isVisited) {
+  return L.icon({
+    iconUrl: './images/raymond-head.png',
     iconSize: [60, 60],
-    iconAnchor: [30, 30]
+    iconAnchor: [30, 30],
+    popupAnchor: [0, -22],
+    className: isVisited ? 'raymond-visited' : 'raymond-notvisited'
   });
 }
 
@@ -80,9 +81,8 @@ async function initOverviewMap() {
     const info = visitedMap[pool.id];
     const isVisited = !!(info && info.done);
 
-   
-    const icon = createOverviewIcon(isVisited);
-    const marker = L.marker([pool.lat, pool.lng], { icon }).addTo(map);
+    const icon = createRaymondIcon(isVisited);
+    L.marker([pool.lat, pool.lng], { icon }).addTo(map);
     marker.bindPopup(`<strong>${pool.name}</strong>`);
   }
 
