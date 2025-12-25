@@ -110,4 +110,3 @@ document.addEventListener('DOMContentLoaded', () => {
     console.error('Error during overview init', err)
   );
 });
-
