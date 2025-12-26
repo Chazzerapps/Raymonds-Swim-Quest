@@ -23,14 +23,7 @@
     "lng": 151.16948,
     "stamp": "stamps/woolwich.png"
   },
-  {
-    "id": "balmain",
-    "name": "Dawn Fraser Baths, Balmain",
-    "suburb": "Balmain",
-    "lat": -33.853774020598166,
-    "lng": 151.1734427426911,
-    "stamp": "stamps/balmain.png"
-  },
+
   {
     "id": "barangaroo",
     "name": "Marrinawi Cove, Barangaroo",
@@ -39,14 +32,7 @@
     "lng": 151.20195305876618,
     "stamp": "stamps/barangaroo.png"
   },
-  {
-    "id": "chiswick",
-    "name": "Chiswick Baths (Parramatta River)",
-    "suburb": "Chiswick",
-    "lat": -33.847269,
-    "lng": 151.142649,
-    "stamp": "stamps/chiswick.png"
-  },
+
   {
     "id": "cremorne-point",
     "name": "Maccallum Seawater Pool, Cremorne Point",
@@ -55,14 +41,8 @@
     "lng": 151.22808678594717,
     "stamp": "stamps/cremorne-point.png"
   },
-  {
-    "id": "balmoral",
-    "name": "Balmoral Baths, Mosman",
-    "suburb": "Balmoral",
-    "lat": -33.82290192335102,
-    "lng": 151.25165013691387,
-    "stamp": "stamps/balmoral.png"
-  },
+
+
   {
     "id": "clifton-gardens",
     "name": "Clifton Gardens (Chowder Bay) netted enclosure, Mosman",
@@ -71,30 +51,7 @@
     "lng": 151.25247249898902,
     "stamp": "stamps/clifton-gardens.png"
   },
-  {
-    "id": "woollahra-redleaf",
-    "name": "Murray Rose Pool (Redleaf), Double Bay",
-    "suburb": "Woollahra",
-    "lat": -33.87150832597563,
-    "lng": 151.2471645018027,
-    "stamp": "stamps/woollahra.png"
-  },
-  {
-    "id": "balgowlah-forty-baskets",
-    "name": "Forty Baskets Beach netted enclosure, Balgowlah",
-    "suburb": "Balgowlah",
-    "lat": -33.803334195910615,
-    "lng": 151.27009214800427,
-    "stamp": "stamps/balgowlah.png"
-  },
-  {
-    "id": "little-manly",
-    "name": "Little Manly Cove tidal/netted pool, Manly",
-    "suburb": "Little Manly",
-    "lat": -33.80659887761168,
-    "lng": 151.28662503302417,
-    "stamp": "stamps/little-manly-cove.png"
-  },
+
   {
     "id": "nielsen-park",
     "name": "Nielsen Park – Shark Beach, Vaucluse",
@@ -118,10 +75,6 @@
     "lat": -33.851478445440314,
     "lng": 151.2775158904059,
     "stamp": "stamps/parsley-bay.png"
-  },
-  {
-    "id": "putney-beac
-
-}
-
+  }
+  
 ]
