@@ -17,20 +17,19 @@ function scheduleOverviewInvalidate(map) {
   setTimeout(() => { try { map.invalidateSize(true); } catch (e) {} }, 600);
 }
 
-/** Create Raymond head marker (PNG) */
 function createRaymondIcon(isVisited) {
   const size = 56; // retina-friendly, still kid-sized
 
   return L.icon({
-    iconUrl: './assets/raymond-head.png',
+    iconUrl: isVisited
+      ? './assets/Raymond-head-red.png'
+      : './assets/Raymond-head-green.png',
     iconSize: [size, size],
     iconAnchor: [size / 2, size / 2],   // true centre
-    popupAnchor: [0, -size / 2 - 6],    // popup above head
-    className: isVisited
-      ? 'raymond-visited'
-      : 'raymond-notvisited'
+    popupAnchor: [0, -size / 2 - 6]     // popup above head
   });
 }
+
 
 function updateOverviewText(pools, visitedMap) {
   const badgeEl = document.getElementById('overviewBadge');
