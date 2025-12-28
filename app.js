@@ -222,20 +222,19 @@ function renderList() {
 // ----------------------------------------------------------
 
 function toggleStamp(poolId, animate = false) {
-  const today = new Intl.DateTimeFormat('en-AU').format(new Date());
+  if (!poolId) return;
 
-  if (visited[poolId]?.done) {
-    // Remove entry entirely (cleaner than marking false)
-    delete visited[poolId];
-  } else {
-    visited[poolId] = { done: true, date: today };
-  }
+  // One-way stamping: once a pool is marked visited, tapping again does nothing.
+  // Only the Reset button clears visited state.
+  if (visited[poolId]?.done) return;
+
+  const today = new Intl.DateTimeFormat('en-AU').format(new Date());
+  visited[poolId] = { done: true, date: today };
 
   writeVisited(visited);
   renderList();
   renderStamps(animate ? poolId : null);
 }
-
 // ----------------------------------------------------------
 // MAP SETUP + MOVEMENT
 // ----------------------------------------------------------
