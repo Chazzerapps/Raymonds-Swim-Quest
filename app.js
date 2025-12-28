@@ -196,7 +196,7 @@ function renderList() {
       ${
         stamped
           ? `✓ I swam here • ${formatDateAU(stampDate)}`
-          : '✅ Add sticker'
+          : '✅ Click when visited'
       }
     </button>
   `;
