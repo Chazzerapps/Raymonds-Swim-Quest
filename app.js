@@ -84,7 +84,7 @@ const btnNextPool  = document.getElementById('btnNextPool');
 // ----------------------------------------------------------
 
 // Update this path to wherever you store the pirate Raymond image in your app.
-const PIRATE_RAYMOND_SRC = './assets/raymond-pirate.png';
+const PIRATE_RAYMOND_SRC = './assets/raymond-blue.png';
 
 let overlayStylesInjected = false;
 
@@ -313,8 +313,8 @@ function renderList() {
     <button class="stamp-chip ${stamped ? 'stamped' : 'cta'}" data-id="${p.id}">
       ${
         stamped
-          ? `✓ Treasure claimed • ${formatDateAU(stampDate)}`
-          : '🏴‍☠️ Claim Treasure'
+          ? `I got Stamp  • ${formatDateAU(stampDate)}`
+          : '🏴‍☠️ Get Stamp'
       }
     </button>
 
@@ -382,7 +382,7 @@ function toggleStamp(poolId, animate = false) {
     // Give the first overlay a moment, then celebrate
     window.setTimeout(() => {
       showTreasureOverlay({
-        title: 'ALL TREASURE FOUND!',
+        title: 'ALL Stamps FOUND!',
         subtitle: 'Captain Raymond is proud of you!',
         stampSrc: null,
         finale: true
