@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Raymond’s Swim Quest — Overview</title>
+  <title>Captain Raymond’s Treasure Quest — Map</title>
 
   <!-- Gate: only allow entry if we came via the splash -->
   <script>
@@ -28,15 +28,12 @@
     <div class="titlebar">
       <div class="brand">
         <div class="dot"></div>
-        <h1>Raymond’s Swim Quest</h1>
+        <h1>Santiago’s Treasure Quest</ h1>
       </div>
       <span id="overviewBadge" class="badge">0 / 0</span>
       <div class="actions">
         <button id="openAppBtn" class="pill primary" type="button">
-          Start Quest
-        </button>
-        <button id="changeNameBtn" class="pill ghost" type="button">
-          Change name
+          Open Treasure Maps 
         </button>
         <a href="index.html" class="pill ghost">Exit</a>
       </div>
@@ -47,9 +44,9 @@
     <div class="card overview-card">
       <div class="overview-header-row">
         <div class="overview-text">
-          <h2>Sydney overview map</h2>
+          <h2>Visit a Pool and collect treasure!<o/h2>
           <p id="overviewText" class="overview-subtext">
-            Loading pools…
+            Loading locations…
           </p>
         </div>
       </div>
@@ -58,17 +55,17 @@
 
       <div class="overview-legend">
         <span class="legend-item">
-          <span class="legend-dot legend-dot-visited"></span> Swum
+          ❌ Not found yet
         </span>
         <span class="legend-item">
-          <span class="legend-dot legend-dot-notvisited"></span> Not yet
+          🏴‍☠️ Treasure found
         </span>
       </div>
     </div>
   </main>
 
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-  <!-- ES module that uses shared data + storage helpers -->
   <script type="module" src="overview.js"></script>
 </body>
 </html>
+

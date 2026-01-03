@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Raymond’s Swim Quest — App</title>
+  <title>Santiago’s Treasure Quest — App</title>
 
   <!-- Gate: only allow entry if we came via the splash / overview -->
   <script>
@@ -33,14 +33,13 @@
     <div class="titlebar">
       <div class="brand">
         <div class="dot"></div>
-        <h1>Raymond’s Swim Quest</h1>
+        <h1>Santiago’s Treasure Quest</h1>
       </div>
 
       <span id="countBadge" class="badge">0 / 0</span>
 
       <div class="actions">
-        <button id="toggleBtn" class="pill primary" title="Toggle Stamps/List">Stickers</button>
-        <button id="resetBtn" class="pill ghost" title="Reset stamps">Reset Stickers</button>
+        <button id="toggleBtn" class="pill primary" title="Toggle Stamps/List">My Treasure</button>
         <a href="index.html" class="pill ghost" title="Exit app">Exit</a>
       </div>
     </div>
@@ -57,13 +56,12 @@
     <section id="listView" class="view active">
       <div class="map-wrap card main-layout">
         <div id="poolList" class="pool-header"></div>
-
-        <div class="nav-bar">
+<div class="nav-bar">
           <button id="btnDown" class="nav-big" aria-label="Previous pool">Prev</button>
 
           <div class="nav-middle">
-            <button id="openNativeMap" class="map-small">Open in Maps</button>
-            <button id="mapToggle" class="map-small">Full Map</button>
+            <button class="map-small" type="button" data-action="open-maps">Open in Maps</button>
+            <button class="map-small" type="button" data-action="full-map">Full Map</button>
           </div>
 
           <button id="btnUp" class="nav-big" aria-label="Next pool">Next</button>
@@ -82,6 +80,10 @@
     -->
     <section id="passportView" class="view">
   
+
+      <div class="passport-actions">
+        <button id="resetBtn" class="pill ghost" title="Reset treasure">Reset Treasure</button>
+      </div>
       <div class="passport-nav">
         <button id="prevPassportPage" class="pill ghost">&laquo; Prev</button>
         <span id="passportPageLabel" class="page-label">Page 1 of 4</span>

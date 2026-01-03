@@ -3,54 +3,102 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Raymond’s Swim Quest</title>
+  <title>Santiago’s Treasure Quest</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body class="splash-body kids" id="splashBody">
 
   <div class="splash-card">
-    <h1 class="splash-title">Raymond’s Swim Quest</h1>
+    <h1 class="splash-title">Captain Raymond’s Treasure Quest</h1>
 
-    <div id="kidName" class="kid-name" aria-live="polite"></div>
-
-    <div class="splash-mascot">
-      <img src="assets/raymond-blue.png" alt="Raymond">
+    <!-- Two-line greeting; keep kid-name class so your existing styling applies -->
+    <div id="kidName" class="kid-name" aria-live="polite">
+      Ahoy there,<br>
+      <span class="highlight">First Mate Santiago!</span>
     </div>
 
-   
-    <button id="startBtn" class="splash-start">Start Quest</button>
+    <div class="splash-mascot">
+      <img src="assets/raymond-pirate.png" alt="Captain Raymond the Pirate">
+    </div>
+
+    <button id="startBtn" class="splash-start">Begin the Quest</button>
   </div>
 
 <script>
 (() => {
-  const KEY = 'passportOwnerName';
-  const nameEl = document.getElementById('kidName');
   const startBtn = document.getElementById('startBtn');
 
-  function getName() {
-    try { return localStorage.getItem(KEY); } catch(e){ return null; }
-  }
-  function setName(v) {
-    try { localStorage.setItem(KEY, v); } catch(e){}
-  }
-  function renderName(v) {
-    if (!nameEl) return;
-    nameEl.textContent = v ? v : '';
-  }
+  // Detect whether the user has any progress saved (visited pools, treasures, stamps, etc.)
+  function hasAnyProgress() {
+    try {
+      // Common key names used by apps like this
+      const commonKeys = [
+        'visited', 'visitedMap', 'visitedPools', 'poolsVisited', 'poolVisited',
+        'treasure', 'treasures', 'treasureFound', 'treasuresFound',
+        'stamp', 'stamps', 'collectedStamps'
+      ];
 
-  // Show saved name (if any) immediately.
-  renderName(getName());
+      for (const k of commonKeys) {
+        const v = localStorage.getItem(k);
+        if (!v) continue;
 
-  // Ask for name on button press (more reliable on iPhone).
-  startBtn?.addEventListener('click', () => {
-    let name = getName();
-    if (!name) {
-      const input = prompt("What’s your name?", "");
-      name = (input && input.trim()) || "";
-      if (name) setName(name);
+        // If it's JSON, try to interpret
+        try {
+          const parsed = JSON.parse(v);
+
+          // Arrays: any items = progress
+          if (Array.isArray(parsed) && parsed.length > 0) return true;
+
+          // Objects: any truthy values = progress
+          if (parsed && typeof parsed === 'object') {
+            for (const val of Object.values(parsed)) {
+              if (val === true) return true;
+              if (typeof val === 'number' && val > 0) return true;
+              if (typeof val === 'string' && val.trim().length > 0) return true;
+              if (Array.isArray(val) && val.length > 0) return true;
+              if (val && typeof val === 'object' && Object.keys(val).length > 0) return true;
+            }
+          }
+        } catch (e) {
+          // Not JSON; any non-empty string counts as progress
+          if (String(v).trim().length > 0) return true;
+        }
+      }
+
+      // Fallback: scan all localStorage keys for “visited/treasure/stamp”
+      for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i) || '';
+        if (!/visited|treasure|stamp/i.test(key)) continue;
+
+        const v = localStorage.getItem(key);
+        if (!v) continue;
+
+        try {
+          const parsed = JSON.parse(v);
+          if (Array.isArray(parsed) && parsed.length > 0) return true;
+          if (parsed && typeof parsed === 'object' && Object.keys(parsed).length > 0) {
+            // If it’s a map of booleans (visited), check for any true
+            if (Object.values(parsed).some(x => x === true)) return true;
+            // Otherwise any non-empty object likely indicates progress
+            return true;
+          }
+        } catch (e) {
+          if (String(v).trim().length > 0) return true;
+        }
+      }
+
+      return false;
+    } catch (e) {
+      return false;
     }
-    renderName(name);
+  }
 
+  // Update button label based on saved progress
+  if (startBtn && hasAnyProgress()) {
+    startBtn.textContent = 'Resume Quest';
+  }
+
+  startBtn?.addEventListener('click', () => {
     try { sessionStorage.setItem('enteredViaSplash', '1'); } catch(e){}
     location.href = 'overview.html';
   });
