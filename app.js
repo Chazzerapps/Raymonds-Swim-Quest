@@ -369,8 +369,8 @@ function toggleStamp(poolId, animate = false) {
   renderStamps(animate ? poolId : null);
 
   // Small reward overlay
-  showTreasureOverlay({
-    title: 'Treasure Found!',
+  showTreasureOverlay(
+    title: 'Stamp Received!',
     subtitle: p.name,
     stampSrc: getStampSrc(p),
     finale: false
@@ -383,7 +383,7 @@ function toggleStamp(poolId, animate = false) {
     window.setTimeout(() => {
       showTreasureOverlay({
         title: 'ALL Stamps FOUND!',
-        subtitle: 'Captain Raymond is proud of you!',
+        subtitle: 'Raymond is proud of you!',
         stampSrc: null,
         finale: true
       });
