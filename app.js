@@ -369,7 +369,7 @@ function toggleStamp(poolId, animate = false) {
   renderStamps(animate ? poolId : null);
 
   // Small reward overlay
-  showTreasureOverlay(
+  showTreasureOverlay({
     title: 'Stamp Received!',
     subtitle: p.name,
     stampSrc: getStampSrc(p),
