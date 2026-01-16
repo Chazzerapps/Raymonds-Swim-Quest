@@ -439,7 +439,7 @@ function panToSelected() {
 
 function getStampSrc(p) {
   // Stamp filenames are derived from pool.id
-  return p.stamp || `stamps/${p.id}.png`;
+  return p.stamp || `./stamps/${p.id}.png`;
 }
 
 function renderStamps(popId = null) {
