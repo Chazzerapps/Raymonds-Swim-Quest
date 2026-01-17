@@ -153,9 +153,12 @@ header.glass{
 }
 .brand h1{
   margin:0;
-  font-size:20px;
-  letter-spacing:.04em;
+  font-size:17px;          /* smaller, app-like */
+  line-height:1.15;
+  letter-spacing:.03em;
+  font-weight:800;
 }
+
 
 .badge{
   font-size:13px;
