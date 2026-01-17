@@ -843,3 +843,8 @@ body.kids.splash-body{
   filter:drop-shadow(0 3px 4px rgba(0,0,0,0.35));
 }
 .leaflet-marker-icon.raymond-visited{ transform:scale(1.05); }
+.app-title{
+   font-size:1.35rem;
+   line-height: 1.15;
+   margin-bottom: 0.25rem;
+}
