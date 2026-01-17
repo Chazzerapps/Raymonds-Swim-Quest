@@ -49,7 +49,7 @@ function updateOverviewText(pools, visitedMap) {
     textEl.textContent =
       total === 0
         ? 'No locations charted yet.'
-        : `Treasure found at ${visitedCount} of ${total} locations.`;
+        : `I got stamps at ${visitedCount} of ${total} locations.`;
   }
 }
 
